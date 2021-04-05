@@ -32,8 +32,6 @@ abstract class Vendedor {
     //Agregado debido al punto Vendedor Influyente, el cual nos pide como caracteristica que
     //los vendedores puedan o no ser "influyentes", el cual cambia acorde a cada uno de ellos.
     abstract fun esInfluyente(): Boolean //Tipo Bool
-
-    abstract fun puedeTrabajarEn(ciudad: Ciudad): Boolean
 }
 
 // En los parámetros, es obligatorio poner el tipo
@@ -67,9 +65,3 @@ class ComercioCorresponsal(val ciudades: List<Ciudad>) : Vendedor() { //Tipo Ven
         return ((this.ciudades.size) >= 5 || (ciudades.map { ciudad -> ciudad.provincia }).size >= 3)
     }
 }
-
-
-class CentroDistribucion(val ciudadOrigen: Ciudad,vendedores: Vendedor){
-
-}
-
