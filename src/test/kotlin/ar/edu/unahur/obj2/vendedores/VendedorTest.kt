@@ -30,7 +30,6 @@ class VendedorTest : DescribeSpec({
         val viajante = Viajante(listOf(misiones))
         //Vendedor 2
         val buenosAires = Provincia(15000000)
-        val ituzaingo = Ciudad(buenosAires)
         val viajante2 = Viajante(listOf(buenosAires))
         describe("puedeTrabajarEn") {
             it("una ciudad que pertenece a una provincia habilitada") {

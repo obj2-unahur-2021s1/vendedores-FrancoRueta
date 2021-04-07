@@ -5,7 +5,7 @@ class Certificacion(val esDeProducto: Boolean, val puntaje: Int) //Clase
 abstract class Vendedor {
     // Acá es obligatorio poner el tipo de la lista, porque como está vacía no lo puede inferir.
     // Además, a una MutableList se le pueden agregar elementos
-    val certificaciones = mutableListOf<Certificacion>() //Lista de certificaciones
+    private val certificaciones = mutableListOf<Certificacion>() //Lista de certificaciones
 
     // Definimos el método abstracto.
     // Como no vamos a implementarlo acá, es necesario explicitar qué devuelve.
@@ -24,7 +24,7 @@ abstract class Vendedor {
 
     fun esFirme() = this.puntajeCertificaciones() >= 30 //Tipo Bool
 
-    fun certificacionesDeProducto() = certificaciones.count { it.esDeProducto } //Tipo Int
+    private fun certificacionesDeProducto() = certificaciones.count { it.esDeProducto } //Tipo Int
     fun otrasCertificaciones() = certificaciones.count { !it.esDeProducto } //Tipo Int
 
     fun puntajeCertificaciones() = certificaciones.sumBy { c -> c.puntaje } //Tipo Int
@@ -35,7 +35,7 @@ abstract class Vendedor {
 }
 
 // En los parámetros, es obligatorio poner el tipo
-class VendedorFijo(val ciudadOrigen: Ciudad) : Vendedor() {
+class VendedorFijo(private val ciudadOrigen: Ciudad) : Vendedor() {
     override fun puedeTrabajarEn(ciudad: Ciudad): Boolean {  //Tipo Bool
         return ciudad == ciudadOrigen
     }
@@ -44,7 +44,7 @@ class VendedorFijo(val ciudadOrigen: Ciudad) : Vendedor() {
 }
 
 // A este tipo de List no se le pueden agregar elementos una vez definida
-class Viajante(val provinciasHabilitadas: List<Provincia>) : Vendedor() {
+class Viajante(private val provinciasHabilitadas: List<Provincia>) : Vendedor() {
     override fun puedeTrabajarEn(ciudad: Ciudad): Boolean { //Tipo Bool
         return provinciasHabilitadas.contains(ciudad.provincia)
     }
@@ -56,7 +56,7 @@ class Viajante(val provinciasHabilitadas: List<Provincia>) : Vendedor() {
     }
 }
 
-class ComercioCorresponsal(val ciudades: List<Ciudad>) : Vendedor() { //Tipo Vendedor
+class ComercioCorresponsal(private val ciudades: List<Ciudad>) : Vendedor() { //Tipo Vendedor
     override fun puedeTrabajarEn(ciudad: Ciudad): Boolean { //tipo bool
         return ciudades.contains(ciudad)
     }
@@ -64,4 +64,37 @@ class ComercioCorresponsal(val ciudades: List<Ciudad>) : Vendedor() { //Tipo Ven
     override fun esInfluyente(): Boolean { //Tipo Bool
         return ((this.ciudades.size) >= 5 || (ciudades.map { ciudad -> ciudad.provincia }).size >= 3)
     }
+}
+
+
+//-------------------------------------------------------CENTRO-DISTRIBUCION--------/
+//-----------------------------------------------------------------------------/
+
+class CentroDistribucion(val ciudadOrigen: Ciudad,private val vendedores: MutableList<Vendedor>){
+
+    fun agregarVendedor(vendedor: Vendedor){
+        if (!vendedores.contains(vendedor)){
+            vendedores.add(vendedor)
+        }
+        else {
+            throw Exception("El vendedor ya esta en el centro!")
+        }
+    }
+
+    fun vendedorEstrella(): Vendedor? {
+        return (vendedores.maxBy { vendedor -> vendedor.puntajeCertificaciones() })
+    }
+
+    fun puedeCubrir(ciudad: Ciudad): Boolean {
+        return vendedores.any { vendedor -> vendedor.puedeTrabajarEn(ciudad) }
+    }
+
+    fun vendedoresGenericos(): List<Vendedor> {
+        return vendedores.filter { vendedor -> vendedor.otrasCertificaciones() != 0 }
+    }
+
+    fun esRobusto(): Boolean {
+        return ((vendedores.filter { vendedor -> vendedor.esFirme() }).size >= 3)
+    }
+
 }
