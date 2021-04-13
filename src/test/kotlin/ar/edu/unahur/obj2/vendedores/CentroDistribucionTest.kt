@@ -40,26 +40,32 @@ class CentroDistribucionTest : DescribeSpec({
 
     describe("Agregar vendedor."){
         /*Ahora del ahora: vienen los IT chiquitos.*/
-        val vendedorNuevo = VendedorFijo(cachaquito)
         it("Agregar un vendedor."){
+            val vendedorNuevo = VendedorFijo(cachaquito)
             centroDistribuciones.agregarVendedor(vendedorNuevo)
 
         }
         it("Agregar al mismo vendedor."){
+            val vendedorNuevo = VendedorFijo(cachaquito)
+            centroDistribuciones.agregarVendedor(vendedorNuevo)
             shouldThrow<Exception>{ centroDistribuciones.agregarVendedor(vendedorNuevo) }
         }
     }
 
 
     describe("Vendedor estrella"){
-        candelaria.agregarCertificacion(certT100)
-        candelaria.agregarCertificacion(certT20) //Candelaria: 120 pts
-        eduardo.agregarCertificacion(certF100)   //Eduardo: 100 pts
-        estefania.agregarCertificacion(certT50)  //Estefania: 50 pts
         it("candelaria es la vendedora estrella"){
+            candelaria.agregarCertificacion(certT100)
+            candelaria.agregarCertificacion(certT20) //Candelaria: 120 pts
+            eduardo.agregarCertificacion(certF100)   //Eduardo: 100 pts
+            estefania.agregarCertificacion(certT50)  //Estefania: 50 pts
             centroDistribuciones.vendedorEstrella().shouldBe(candelaria)
         }
         it("Ahora es estefania"){
+            candelaria.agregarCertificacion(certT100)
+            candelaria.agregarCertificacion(certT20) //Candelaria: 120 pts
+            eduardo.agregarCertificacion(certF100)   //Eduardo: 100 pts
+            estefania.agregarCertificacion(certT50)  //Estefania: 50 pts
             //Le agregamos puntos a estefania para que supere a candelaria.
             estefania.agregarCertificacion(certT100)
             estefania.agregarCertificacion(certF100)
@@ -68,13 +74,16 @@ class CentroDistribucionTest : DescribeSpec({
     }
 
     describe("Puede cubrir"){
-        //Creamos una nueva ciudad, la cual no pueda ser cubierta.
-        val prov1 = Provincia(50)
-        val laferrere = Ciudad(prov1)
         it("Aca no se puede."){
+            //Creamos una nueva ciudad, la cual no pueda ser cubierta.
+            val prov1 = Provincia(50)
+            val laferrere = Ciudad(prov1)
             centroDistribuciones.puedeCubrir(laferrere).shouldBe(false)
         }
         it("Ahora si se puede"){
+            //Creamos una nueva ciudad, la cual no pueda ser cubierta.
+            val prov1 = Provincia(50)
+            val laferrere = Ciudad(prov1)
             //Añadimos a laurita, dispuesta a trabajar en la ferrere.
             val laurita = VendedorFijo(laferrere)
             centroDistribuciones.agregarVendedor(laurita)

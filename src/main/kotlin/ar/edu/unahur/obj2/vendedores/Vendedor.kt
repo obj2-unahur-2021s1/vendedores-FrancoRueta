@@ -32,6 +32,8 @@ abstract class Vendedor {
     //Agregado debido al punto Vendedor Influyente, el cual nos pide como caracteristica que
     //los vendedores puedan o no ser "influyentes", el cual cambia acorde a cada uno de ellos.
     abstract fun esInfluyente(): Boolean //Tipo Bool
+
+    fun esGenerico() = otrasCertificaciones() > 0
 }
 
 // En los parámetros, es obligatorio poner el tipo
@@ -62,7 +64,8 @@ class ComercioCorresponsal(private val ciudades: List<Ciudad>) : Vendedor() { //
     }
 
     override fun esInfluyente(): Boolean { //Tipo Bool
-        return ((this.ciudades.size) >= 5 || (ciudades.map { ciudad -> ciudad.provincia }).size >= 3)
+        val ciudadAProvincia = ciudades.map { ciudad -> ciudad.provincia }.toSet()
+        return ((this.ciudades.size) >= 5 || (ciudadAProvincia.size >= 3))
     }
 }
 
@@ -73,28 +76,26 @@ class ComercioCorresponsal(private val ciudades: List<Ciudad>) : Vendedor() { //
 class CentroDistribucion(val ciudadOrigen: Ciudad,private val vendedores: MutableList<Vendedor>){
 
     fun agregarVendedor(vendedor: Vendedor){
-        if (!vendedores.contains(vendedor)){
-            vendedores.add(vendedor)
+        if (vendedores.contains(vendedor)){
+            throw Exception("El vendedor ya esta en el centro!")
         }
         else {
-            throw Exception("El vendedor ya esta en el centro!")
+            vendedores.add(vendedor)
         }
     }
 
-    fun vendedorEstrella(): Vendedor? {
-        return (vendedores.maxBy { vendedor -> vendedor.puntajeCertificaciones() })
-    }
+    fun vendedorEstrella() = (vendedores.maxBy { vendedor -> vendedor.puntajeCertificaciones() })
 
     fun puedeCubrir(ciudad: Ciudad): Boolean {
         return vendedores.any { vendedor -> vendedor.puedeTrabajarEn(ciudad) }
     }
 
     fun vendedoresGenericos(): List<Vendedor> {
-        return vendedores.filter { vendedor -> vendedor.otrasCertificaciones() != 0 }
+        return vendedores.filter { vendedor -> vendedor.esGenerico() }
     }
 
     fun esRobusto(): Boolean {
-        return ((vendedores.filter { vendedor -> vendedor.esFirme() }).size >= 3)
+        return vendedores.count { vendedor -> vendedor.esFirme() } >= 3
     }
 
 }
